@@ -6,6 +6,7 @@ parser = OptionParser()
 parser.add_option("-w", action='store', type='string', dest='words')
 parser.add_option("-l", action='store', type='string', dest='lines')
 parser.add_option("-c", action='store', type='string', dest='chars')
+
 #parser.add_option("-A", action='store', type='string', dest='filename')
 #(values,args) = parser.parse_args()
 #name = values.words

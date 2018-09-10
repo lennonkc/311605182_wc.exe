@@ -1,122 +1,83 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-"""
 import sys
-name = raw_input("Please input your name: ")
-print (name)
+import os
 
-import sys
-print("please")
-name = sys.stdin.readline()
-print(name)
+from optparse import OptionParser
+usage = "myprog[ -f <filename>][-s <xyz>] arg1[,arg2..]"
+parser = OptionParser(usage)
+parser.print_help()
+parser.add_option("-w", action='store', type='string', dest='words',help="Count the numbers of WORDS in a file")
+parser.add_option("-l", action='store', type='string', dest='lines',help="Count the numbers of LINES in a file")
+parser.add_option("-c", action='store', type='string', dest='chars',help="Count the numbers of CHARS in a file")
+parser.add_option("-s", action='store', type='string', dest='keyword',help="you must use '-p' to define a file path first,for example: -p -s c:\\usr\\bin Keyword")
+parser.add_option("-p", action='store', type='string', dest='path',help="define a path,use this first and then use -s")
 
+options,args = parser.parse_args()
 
-import sys
-import time
-
-for i in range(10):
-    sys.stdout.write('>') #当然这里加上\n就会一个一个输出，因为sys.stdout是正行正行输出（加\n,就类似于print了）
-    sys.stdout.flush() #强制i刷新到stdout中去
-    time.sleep(1)
-"""
-
-
-
-"""
-
-#成功统计行数 词数 字符数
-#!/usr/bin/env python
-import sys
-data = sys.stdin.read()
-chars = len(data)
-words = len(data.split())
-lines = data.count('\n')
-print('%s %s %s ' % (lines,words,chars))
-#print('%(lines)s %(words)s %(chars)s' % locals()) #高级用法，%(key)s,表示格式化关键字替换，后面就需要以字典的方式传入对应的key值，而locals（)，表示当前环境下所有的变量和值的字典，所以这里可以进行替换
- #这种方法和上面利用locals的方式是一样的，只不过locals的变量更多而已words
-
-"""
-"""
-fo=open("1.txt","r+")
-print("文件名",fo.name)
-print("是否已关闭",fo.closed)
-print("访问模式：",fo.mode)
-#fo.write("www.google.com")
-str=fo.read()
-print(str)
-fo.close()
-print("是否已关闭",fo.closed)
-"""
-
-"""
-lineN = 0
-wordN = 0
-charN = 0
-for str in fo.read():
-    if (str == ' '):
-        wordN = wordN+1
-    else:
-        wordN = wordN
-
-fo=open("1.txt","r+")
-for line in fo.readlines():
- #   line=line.strip()
-    lineN = lineN+1
-
-fo=open("1.txt","r+")
-for stc in fo.read():
-    charN = charN + 1
-
-print(lineN,wordN,charN)
-
-fo.close()
-"""
-
-"""
-#测试成功
-def file_word():
-    file = open("2.txt", "r+")
+def file_word(filename):
+    file = open(filename, "r+")
     wordN = 1
     for str in file.read():
         if(str == ' '):
             wordN = wordN + 1
-    print("文档的单词数是:",wordN)
-
-def file_line():
-    file = open("2.txt","r+")
+    print "The number of words in this document is:",wordN
+def file_line(filename):
+    file = open(filename,"r+")
     lineN = 1
     for i in file.read():
         if(i == '\n'):
             lineN = lineN + 1
-    print("文档的行数是:",lineN)
-
-def file_char():
-    file = open("2.txt","r+")
+    print "The number of lines in this document is:",lineN
+def file_char(filename):
+    file = open(filename,"r+")
     charN = 0
     for stc in file.read():
         if(stc == '\n'):
             charN
         else:
             charN = charN + 1
-    print("文档的字符数是:", charN)
+    print "The number of chars in this document is:",charN
+#Cause when using the args to deliver, some unexpected chars occured in the filename , so use the clear_filename to repair filename
+def clear_filename(string):
+    clearBox = "[]\'"
+    for i in clearBox:
+        string = string.replace(i,"")
+    return string
 
-file_line()
-file_char()
-file_word()
+def search_filename(path, word):
+    for filename in os.listdir(path):
+        fp = os.path.join(path, filename)
+        if os.path.isfile(fp) and word in filename:
+            print (fp)
+            return fp
+        elif os.path.isdir(fp):
+            search_filename(fp, word)
+
+
+name = str(args)
+name = clear_filename(name)
+
+if not ((options.chars or options.words or options.lines or options.keyword)):
+    file_line(name)
+    file_word(name)
+    file_char(name)
+
+
+if options.chars:
+    file_char(name)
+if options.words:
+    file_word(name)
+if options.lines:
+    file_line(name)
+if (options.path and options.keyword):
+    str = [options.path,options.keyword]
+    fp = search_filename(str[0],str[1])
+    file_word(fp)
+    file_char(fp)
+    file_line(fp)
+
+
 """
 
-import sys
-from optparse import OptionParser
-parser = OptionParser()
-parser.add_option('-w','--word',dest='words',action='store_true',default=False,help='only user to count words')
-options,args = parser.parse_args()
-
-def file_word(fname):
-    file = open(fname, "r+")
-    wordN = 1
-    for str in file.read():
-        if(str == ' '):
-            wordN = wordN + 1
-    print("文档的单词数是:",wordN)
-
-file_word(args)
+-p O:\software-Engineering\311605182_wc.exe -s 1.txt
+O:\\
+"""
