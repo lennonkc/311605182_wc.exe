@@ -2,7 +2,7 @@ import sys
 import os
 
 from optparse import OptionParser
-usage = "myprog[ -f <filename>][-s <xyz>] arg1[,arg2..]"
+usage = "myprog[ -h <lcspa>] filename"
 parser = OptionParser(usage)
 parser.print_help()
 parser.add_option("-w", action='store', type='string', dest='words',help="Count the numbers of WORDS in a file")
